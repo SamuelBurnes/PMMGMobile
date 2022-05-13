@@ -1,4 +1,4 @@
-const tiles = document.querySelectorAll("div[class~='E4k-KlbccYxDX+4RCvyOIA==']");
+const tiles = document.querySelector("div.E4k-KlbccYxDX+4RCvyOIA==");
 console.log("For Loop Start");
 console.log(tiles);
 Array.from(tiles).forEach(tile => {
