@@ -25,7 +25,7 @@ class PMMGMobile {
 			{
 				const notsElem = buffer.children[1].firstChild;
 				Array.from(notsElem.children).forEach(nots => {
-					if(nots.classList.includes("_6iTMJZ+xm-PbG+nWoPqh7g=="))
+					if(nots.outerHTML.includes("_6iTMJZ+xm-PbG+nWoPqh7g=="))
 					{
 						const notType = document.createElement("div");
 						notType.classList.add("pmmg-nots");
