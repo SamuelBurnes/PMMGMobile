@@ -30,8 +30,7 @@ class PMMGMobile {
 						const notType = document.createElement("div");
 						notType.classList.add("pmmg-nots");
 						notType.textContent = "test";
-						console.log(notType);
-						//nots.children[1].insertBefore(notType, nots.children[1].children[0]);
+						nots.children[1].insertBefore(notType, nots.children[1].children[0]);
 					}
 				});
 			}
