@@ -24,13 +24,14 @@ class PMMGMobile {
 			if(buffer.firstChild.firstChild.textContent === "Buffer / NOTS")
 			{
 				const notsElem = buffer.children[1].firstChild;
-				notsElem.children.forEach(nots => {
+				Array.from(notsElem.children).forEach(nots => {
 					if(nots.classList.includes("_6iTMJZ+xm-PbG+nWoPqh7g=="))
 					{
 						const notType = document.createElement("div");
 						notType.classList.add("pmmg-nots");
 						notType.textContent = "test";
-						nots.children[1].insertBefore(notType, nots.children[1].children[0]);
+						console.log(notType);
+						//nots.children[1].insertBefore(notType, nots.children[1].children[0]);
 					}
 				});
 			}
