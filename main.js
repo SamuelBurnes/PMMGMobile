@@ -1,9 +1,9 @@
-console.log("Start");
+console.log("PMMG Mobile Loaded");
 
 class PMMGMobile {
 	loop(){
-		console.log("Looped");
-
+		const tiles = document.querySelectorAll("div._7Ge4LWt06zuiD6QZsE91+Q==");
+		console.log(tiles);
 		window.setTimeout(() => this.loop(), 1000);
 	}
 
