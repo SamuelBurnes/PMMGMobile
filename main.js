@@ -23,19 +23,20 @@ class PMMGMobile {
 			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
 			if(buffer.firstChild.firstChild.textContent === "Buffer / NOTS")
 			{
-				console.log(buffer);
 				const notsElem = buffer.children[1].firstChild;
-				console.log(notsElem);
-				Array.from(notsElem).forEach(nots => {
+				Array.from(notsElem.children).forEach(nots => {
 					if(nots.classList.includes("_6iTMJZ+xm-PbG+nWoPqh7g=="))
 					{
-						console.log("Processing Not");
 						const notType = document.createElement("div");
 						notType.classList.add("pmmg-nots");
 						notType.textContent = "test";
 						nots.children[1].insertBefore(notType, nots.children[1].children[0]);
 					}
 				});
+			}
+			else
+			{
+				console.log("NOTS Not Detected");
 			}
 		} catch(e)
 		{console.log("NOTS Not Detected")}
