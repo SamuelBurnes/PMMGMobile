@@ -1,8 +1,5 @@
 console.log("Start");
 
-const runner = new PMMGMobile();
-runner.loop();
-
 class PMMGMobile {
 	loop(){
 		console.log("Looped");
@@ -11,3 +8,6 @@ class PMMGMobile {
 	}
 
 }
+
+const runner = new PMMGMobile();
+runner.loop();
