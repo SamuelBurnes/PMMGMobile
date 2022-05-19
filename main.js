@@ -2,9 +2,23 @@ console.log("PMMG Mobile Loaded");
 
 class PMMGMobile {
 	loop(){
-		const tiles = document.querySelectorAll("div._7Ge4LWt06zuiD6QZsE91+Q==");
-		console.log(tiles);
+		this.nots_recolor();
 		window.setTimeout(() => this.loop(), 1000);
+	}
+	
+	nots_recolor()
+	{
+		try
+		{
+			const container = document.getElementById("container");
+			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+			if(buffer.firstChild.firstChild.textContent === "Buffer / NOTS")
+			{
+				console.log("NOTS Detected");
+			}
+		} catch(e)
+		{console.log("NOTS Not Detected")}
+		return;
 	}
 
 }
