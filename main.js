@@ -24,7 +24,7 @@ class PMMGMobile {
 			if(buffer.firstChild.firstChild.textContent === "Buffer / NOTS")
 			{
 				const notsElem = buffer.children[1].firstChild;
-				Array.from(notsElem.children).forEach(nots => {
+				notsElem.children.forEach(nots => {
 					if(nots.classList.includes("_6iTMJZ+xm-PbG+nWoPqh7g=="))
 					{
 						const notType = document.createElement("div");
@@ -36,10 +36,10 @@ class PMMGMobile {
 			}
 			else
 			{
-				console.log("NOTS Not Detected");
+				console.log("NOTS Not Detected Negative");
 			}
 		} catch(e)
-		{console.log("NOTS Not Detected")}
+		{console.log(e)}
 		return;
 	}
 
