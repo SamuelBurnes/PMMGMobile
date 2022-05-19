@@ -50,8 +50,8 @@ class PMMGMobile {
 					{
 						const notType = document.createElement("div");
 						notType.classList.add("pmmg-nots");
-						var textContent = nots.children[1].children[0].textContent;
-						const text = textContent.toLowerCase();
+						const text = nots.children[1].children[0].textContent.toLowerCase();
+
 						Searchers.forEach(search => {
 							const match = text.match(new RegExp(search[0]));
 							if(match != null)
@@ -62,6 +62,58 @@ class PMMGMobile {
 								notType.style.minWidth = "62px";
 								notType.style.maxWidth = "62px";
 								nots.children[1].insertBefore(notType, nots.children[1].children[0]);
+
+								// Shorten Notifications
+								var matches;
+								var notText = nots.children[1].children[1].textContent;
+
+								if(notText == null){return;}
+
+								notText = notText.replace(/Chamber of Global Commerce/, "COGC");
+
+								switch(search[0])
+								{
+									case "produced":
+										notText = notText.replace(/at your base /, "");
+										notText = notText.replace(/One /, "1 ");
+										notText = notText.replace(/ have been/, "");
+										notText = notText.replace(/ unit[s]? of/, "");
+										matches = notText.match(/ ([A-z -]+) produced/);
+										if(matches != null && matches[1] != undefined && Materials[matches[1]] != undefined)
+										{
+											notText = notText.replace(new RegExp(matches[1]), Materials[matches[1]][0]);
+										}
+										break;
+									case "trade":
+										matches = notText.match(/your ([A-z -]+) order/);
+										if(matches != null && matches[1] != undefined && Materials[matches[1]] != undefined)
+										{
+											notText = notText.replace(new RegExp(matches[1]), Materials[matches[1]][0]);
+										}
+									case "order filled":
+										notText = notText.replace(/ Commodity Exchange/, "");
+										matches = notText.match(/([A-z -]+) order/);
+										if(matches != null && matches[1] != undefined && Materials[matches[1]] != undefined)
+										{
+											notText = notText.replace(new RegExp(matches[1]), Materials[matches[1]][0]);
+										}
+										break;
+									case "accepted":
+										notText = notText.replace(/ the/, "");
+										notText = notText.replace(/ local market/, "");
+										break;
+									case "contract":
+										notText = notText.replace(/Your partner /, "");
+										break;
+									case "arrived at":
+										notText = notText.replace(/its destination /, "");
+										break;
+									case "cogc":
+									case "chamber of global commerce":
+										notText = notText.replace(/ a new economic program/, "");
+										break;
+								}
+								nots.children[1].children[1].textContent = notText;
 							}
 						});
 						
