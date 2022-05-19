@@ -1,5 +1,26 @@
 console.log("PMMG Mobile Loaded");
-
+// Words to search for, their types, and colors courtesy of Ray K
+// Searches must be lower case
+const Searchers = [
+	["contract", "contract", "rgb(247, 166, 0)"],
+	["produced", "produced", "#3fa2de"],
+	["accepted", "advert", "#449c57"],
+	["expired", "advert", "#449c57"],
+	["trade", "trade", "#008000"],
+	["order filled", "order", "#cc2929"],
+	["arrived at", "arrival", "#b336b3"],
+	["report", "report", "#00aa77"],
+	["election", "election", "#8f52cc"],
+	["governor", "governor", "#8f52cc"],
+	["rules", "rules", "#8f52cc"],
+	["cogc", "COGC", "#8f52cc"],
+	["chamber of global commerce", "COGC", "#8f52cc"],
+	["expert", "expert", "#ff8a00"],
+	["our corporation", "corp", "#8f52cc"],
+	["population infrastructure project", "POPI", "#8f52cc"],
+	["apex", "update", "#00aa77"],
+	["warehous", "war", "#cc2929"]
+]
 class PMMGMobile {
 	loop(){
 		this.nots_recolor();
@@ -29,8 +50,21 @@ class PMMGMobile {
 					{
 						const notType = document.createElement("div");
 						notType.classList.add("pmmg-nots");
-						notType.textContent = "test";
-						nots.children[1].insertBefore(notType, nots.children[1].children[0]);
+						var textContent = nots.children[1].children[0].textContent;
+						const text = textContent.toLowerCase();
+						Searchers.forEach(search => {
+							const match = text.match(new RegExp(search[0]));
+							if(match != null)
+							{
+								notType.style.color = search[2];
+								notType.textContent = search[1].toUpperCase();
+								notType.style.display = "inline-block";
+								notType.style.minWidth = "62px";
+								notType.style.maxWidth = "62px";
+								nots.children[1].insertBefore(notType, nots.children[1].children[0]);
+							}
+						});
+						
 					}
 				});
 			}
@@ -43,6 +77,7 @@ class PMMGMobile {
 		return;
 	}
 
+	
 }
 
 const runner = new PMMGMobile();
