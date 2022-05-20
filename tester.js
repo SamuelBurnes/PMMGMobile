@@ -593,7 +593,8 @@ class PMMGMobile {
 						const eachSpan = document.createElement("span");
 						eachSpan.textContent = " (" + (totalCents / (count * 100)).toLocaleString(undefined, {maximumFractionDigits: 2}) + " ea)";
 						eachSpan.classList.add("pmmg-lm-ads");
-						ad.firstChild.children[1].children[2].appendChild(eachSpan);
+						text = text.replace(/ \([a-zA-Z0-9.,]* ea\)/, "");
+						ad.firstChild.children[1].textContent = text.replace(" for", " (" + (totalCents / (count * 100)).toLocaleString(undefined, {maximumFractionDigits: 2}) + " ea) for")
 					}
 				});
 			}
