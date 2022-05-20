@@ -413,6 +413,7 @@ class PMMGMobile {
 	loop(prices){
 		this.nots_recolor();
         this.lm_post(prices);
+		this.lm_ads();
 		window.setTimeout(() => this.loop(prices), 1000);
 	}
 	
