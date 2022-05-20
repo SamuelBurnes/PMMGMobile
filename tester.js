@@ -377,7 +377,11 @@ const Materials = {
 }
 
 class PMMGMobile {
-    prices = {};    // Corp prices loaded through a webapp
+    prices;    // Corp prices loaded through a webapp
+    constructor()
+    {
+        this.prices = {};
+    }
 
     get_prices()
     {
@@ -392,7 +396,6 @@ class PMMGMobile {
                 console.log("Retreived Prices from Web App");
                 var priceData = JSON.parse(xhr.responseText);
                 const keys = Object.keys(priceData);
-                console.log(keys);
                 keys.forEach(key => {
                     this.prices[key] = priceData[key];
                 });
@@ -539,9 +542,9 @@ class PMMGMobile {
                     if(currency != "" && currency != null){priceText += CurrencySymbols[currency];}
                     priceText += unitPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " ea";
 
-                    if(prices[commodity] != undefined)
+                    if(this.prices[commodity] != undefined)
                     {
-                        priceText += " | " + (prices[commodity] * parseFloat(amount)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
+                        priceText += " | " + (this.prices[commodity] * parseFloat(amount)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
                     }
                     const displayElement = document.createElement("div");
                     displayElement.textContent = priceText;
