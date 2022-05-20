@@ -380,7 +380,6 @@ class PMMGMobile {
 
     get_prices(prices)
     {
-        console.log(prices);
         const webappid = "AKfycbyeZcb0azMICGhAUY2-1clwMpySbTH-5xXklw__tSSvLakKDCxaNaA2t0vySuzM25GUZA";
         var xhr = new XMLHttpRequest();
         xhr.ontimeout = function(){console.log("Error! Timed Out!");};
@@ -397,7 +396,6 @@ class PMMGMobile {
                     keys.forEach(key => {
                         prices[key] = priceData[key];
                     });
-                    console.log(prices);
                 }
                 catch(SyntaxError)
                 {
@@ -413,8 +411,6 @@ class PMMGMobile {
     }
 
 	loop(prices){
-        console.log("Loop");
-        console.log(prices);
 		this.nots_recolor();
         this.lm_post(prices);
 		window.setTimeout(() => this.loop(prices), 1000);
@@ -519,14 +515,13 @@ class PMMGMobile {
 
     lm_post(prices)
     {
-        console.log("LM Price");
-        console.log(prices);
         this.cleanup("pmmg-lm-post");
         const container = document.getElementById("container");
 
         if(container.firstChild.firstChild.children[1].children[1].firstChild == null){return;};
 
         const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+        if(buffer == null || buffer.firstChild == null || buffer.firstChild.firstChild == null){return;}
         if(buffer.firstChild.firstChild.textContent.includes("Buffer / LMP "))
         {
             console.log("Successfully Found LM Post");
