@@ -1,4 +1,11 @@
 console.log("PMMG Mobile Loaded");
+const CurrencySymbols = {
+	"CIS": "₡",
+	"AIC": "₳",
+	"NCC": "₦",
+	"ICA": "ǂ",
+	"ECD": "€",
+}
 // Words to search for, their types, and colors courtesy of Ray K
 // Searches must be lower case
 const Searchers = [
@@ -370,9 +377,47 @@ const Materials = {
 }
 
 class PMMGMobile {
-	loop(){
+
+    get_prices(prices)
+    {
+        const webappid = "";
+        var xhr = new XMLHttpRequest();
+        xhr.ontimeout = function(){console.log("Error! Timed Out!");};
+
+        xhr.onreadystatechange = function()
+        {
+            if(xhr.readyState == XMLHttpRequest.DONE)
+            {
+                console.log("Retreived Prices from Web App");
+                try
+                {
+                    var priceData = JSON.parse(xhr.responseText);
+                    const keys = Object.keys(priceData);
+                    keys.forEach(key => {
+                        prices[key] = priceData[key];
+                    });
+                }
+                catch(SyntaxError)
+                {
+                    console.log("Bad Data from Web App");
+                }
+                return;
+            }
+        };
+        xhr.timeout = 10000;
+        xhr.open("GET", "https://script.google.com/macros/s/" + webappid + "/exec?mode=%22price%22", true);
+        xhr.send(null);
+        return;
+    }
+
+	loop(prices){
 		this.nots_recolor();
-		window.setTimeout(() => this.loop(), 1000);
+        this.lm_post(prices);
+		this.lm_ads();
+		this.shipping_ads();
+		this.production_scroll();
+		this.fleet_etas();
+		window.setTimeout(() => this.loop(prices), 1000);
 	}
 	
 	cleanup(className)
@@ -381,7 +426,7 @@ class PMMGMobile {
 			elem.parentNode.removeChild(elem);
 		});
 	}
-
+    
 	nots_recolor()
 	{
 		try
@@ -472,8 +517,208 @@ class PMMGMobile {
 		return;
 	}
 
-	
+    lm_post(prices)
+    {
+        this.cleanup("pmmg-lm-post");
+        const container = document.getElementById("container");
+		try
+		{
+        	const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+			if(buffer.firstChild.firstChild.textContent.includes("Buffer / LMP ") || buffer.firstChild.firstChild.textContent.includes("Local Markets / LMP "))
+			{
+				const form = buffer.children[1].firstChild.firstChild.children[1].firstChild.firstChild.firstChild;
+				const type = form.children[0].children[1].firstChild.textContent;
+				const commodity = document.evaluate("div[label/span[text()='Commodity']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+				const amount = document.evaluate("div[label/span[text()='Amount']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+				const totalPrice = document.evaluate("div[label/span[text()='Total price']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+				const currency = document.evaluate("div[label/span[text()='Currency']]//select", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+				if(type === "BUYING" || type === "SELLING")
+				{   // Buy/sell ads
+					const unitPrice = parseFloat(totalPrice.value) / parseFloat(amount.value);
+					var priceText = "";
+					if(currency.value != "" && currency.value != null && currency.value != "--" && currency.value != undefined){priceText += CurrencySymbols[currency.value];}
+					priceText += unitPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " ea";
+					if(prices != undefined && commodity.value != undefined && prices[commodity.value] != undefined)
+					{
+						priceText += " | " + (prices[commodity.value] * parseFloat(amount.value)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
+					}
+					const displayElement = document.createElement("div");
+					displayElement.textContent = priceText;
+					displayElement.classList.add("pmmg-lm-post");
+					const totalPriceDiv = form.children[4].children[1].firstChild.firstChild;
+					totalPriceDiv.insertBefore(displayElement, totalPriceDiv.children[0]);
+
+				}
+				else
+				{   // Shipping ads
+					if(commodity.value != undefined && Materials[commodity.value] != undefined)
+					{
+						const weight = parseFloat(amount.value) * Materials[commodity.value][1];
+						const volume = parseFloat(amount.value) * Materials[commodity.value][2];
+						const displayedMeasure = weight >= volume ? weight : volume;
+						const units = weight >= volume ? "t" : "m³";
+
+						var displayText = displayedMeasure.toLocaleString(undefined, {maximumFractionDigits: 0}) + " " + units + " | ";
+						if(currency.value != "" && currency.value != null && currency.value != "--" && currency.value != undefined){displayText += CurrencySymbols[currency.value];}
+						displayText += (parseFloat(totalPrice.value) / displayedMeasure).toLocaleString(undefined, {maximumFractionDigits: 2}) + " / " + units;
+
+						const displayElement = document.createElement("div");
+						displayElement.textContent = priceText;
+						displayElement.classList.add("pmmg-lm-post");
+						const totalPriceDiv = form.children[4].children[1].firstChild.firstChild;
+						totalPriceDiv.insertBefore(displayElement, totalPriceDiv.children[0]);
+						}
+				}
+			}
+		} catch(e){}
+        return;
+    }
+
+	lm_ads()
+	{
+		this.cleanup("pmmg-lm-ads");
+		const container = document.getElementById("container");
+		try
+		{
+			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+			if(buffer.firstChild.firstChild.textContent.includes("Buffer / LM ") || buffer.firstChild.firstChild.textContent.includes("Local Markets / LM "))
+			{
+				const board = buffer.children[1].firstChild.firstChild.children[4];
+				Array.from(board.children).forEach(ad => {
+					var text = ad.firstChild.children[1].textContent;
+					const matches = text && text.match(/(BUYING|SELLING)\s(\d+)\s.*\s@\s([\d,.]+)\s[A-Z]+\sfor/);
+					if(matches && matches.length > 3)
+					{
+						const count = parseInt(matches[2]);
+						const totalCents = parseInt(matches[3].replace(/[,.]/g, ''));
+						if(totalCents <= 1){return;}
+
+						text = text.replace(/ \([a-zA-Z0-9.,]* ea\)/, "");
+						ad.firstChild.children[1].textContent = text.replace(" for", " (" + (totalCents / (count * 100)).toLocaleString(undefined, {maximumFractionDigits: 2}) + " ea) for")
+					}
+				});
+			}
+		} catch(e){}
+		return;
+	}
+
+	shipping_ads()
+	{
+		this.cleanup("pmmg-ship-ads");
+		const container = document.getElementById("container");
+		try
+		{
+			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+			if(buffer.firstChild.firstChild.textContent.includes("Buffer / LM ") || buffer.firstChild.firstChild.textContent.includes("Local Markets / LM "))
+			{
+				const board = buffer.children[1].firstChild.firstChild.children[4];
+				Array.from(board.children).forEach(ad => {
+					var text = ad.firstChild.children[1].textContent;
+					console.log(text);
+					const matches = text && text.match(/(?:SHIPPING)\s([\d,.]+)t\s\/\s([\d,.]+)m³\s@\s([\d,.]+)\s[A-Z]+\sfrom/);
+					if(matches && matches.length > 3)
+					{
+						const totalCents = parseInt(matches[3].replace(/[,.]/g, ''));
+						const tonnage = parseFloat(matches[1].replace(/[,.]/g, '')) / 100;
+						const size = parseFloat(matches[2].replace(/[,.]/g, '')) / 100;
+						
+						const unit = tonnage > size ? 't' : 'm³';
+						const count = tonnage > size ? tonnage : size;
+						const perItem = (totalCents / count / 100).toLocaleString(undefined, {maximumFractionDigits: 1});
+
+						text = text.replace(/ \([a-zA-Z0-9.,]*\/(t|m³)\)/, "");
+						ad.firstChild.children[1].textContent = text.replace(" from", " (" + perItem + "/" + unit + ") from");
+					}
+				});
+			}
+		} catch(e){}
+		return;
+	}
+
+	production_scroll()
+	{
+		this.cleanup("pmmg-production-scroll");
+		const container = document.getElementById("container");
+		try
+		{
+			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+			if(buffer.firstChild.firstChild.textContent.includes("Buffer / PROD "))
+			{
+				const prod = buffer.children[1].firstChild;
+				const innerElem = prod.children[1].firstChild.firstChild;
+				innerElem.style.overflowX = "hidden";
+				innerElem.style.overflowY = "scroll";
+
+				const count = innerElem.firstChild.children.length;
+				prod.style.width = (count * 120) + "px";
+			}
+		} catch(e){}
+	}
+
+	fleet_etas()
+	{
+		this.cleanup("pmmg-fleet");
+		const container = document.getElementById("container");
+		try
+		{
+			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+			if(buffer.firstChild.firstChild.textContent.includes(" / FLT"))
+			{
+				const fleet = buffer.children[1].firstChild.firstChild;
+				Array.from(fleet.children).forEach(ship => {
+					const timeLeftElem = ship.children[2].children[1];
+					if(timeLeftElem == null || timeLeftElem.firstChild == null){return;}
+					const duration = timeLeftElem.firstChild.textContent;
+					if(duration == undefined || duration == ""){return;}
+					const eta = this.convertDurationToETA(this.parseDuration(duration));
+					const etaElem = document.createElement("span");
+					etaElem.textContent = eta;
+					etaElem.classList.add("pmmg-fleet");
+					timeLeftElem.appendChild(etaElem);
+					
+				});
+			}
+		} catch(e){}
+	}
+
+	convertDurationToETA(parsedSeconds){
+		const eta = new Date();
+		const now = new Date();
+		eta.setSeconds(eta.getSeconds() + parsedSeconds);
+		const diffTime = Math.abs(eta.getTime() - now.getTime());
+		const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+		
+		let ret = eta.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+		if (diffDays > 0) {
+			ret += ` +${diffDays}d`;
+		}
+		ret = " (" + ret + ")";
+		return ret;
+	}
+
+	parseDuration(duration) {
+		const days = duration.match(/(\d+)\s*d/);
+		const hours = duration.match(/(\d+)\s*h/);
+		const minutes = duration.match(/(\d+)\s*m/);
+		const seconds = duration.match(/(\d+)\s*s/);
+		
+		let parsedSeconds = 0;
+		if (days) {
+			parsedSeconds += parseInt(days[1]) * 86400;
+		}
+		if (hours) {
+			parsedSeconds += parseInt(hours[1]) * 3600;
+		}
+		if (minutes) {
+			parsedSeconds += parseInt(minutes[1]) * 60;
+		}
+		if (seconds) {
+			parsedSeconds += parseInt(seconds[1]);
+		}
+		return parsedSeconds;
+	}
 }
 
 const runner = new PMMGMobile();
-runner.loop();
+var prices = {};
+runner.loop(prices);
