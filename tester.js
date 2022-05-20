@@ -391,7 +391,6 @@ class PMMGMobile {
                 console.log("Retreived Prices from Web App");
                 try
                 {
-					console.log(xhr.getResponseHeader("Location"));
                     var priceData = JSON.parse(xhr.responseText);
                     const keys = Object.keys(priceData);
                     keys.forEach(key => {
@@ -406,7 +405,7 @@ class PMMGMobile {
             }
         };
         xhr.timeout = 10000;
-        xhr.open("GET", "shorturl.at/oxzDH", true);
+        xhr.open("GET", "https://script.google.com/macros/s/" + webappid + "/exec?mode=%22price%22", true);
         xhr.send(null);
         return;
     }
