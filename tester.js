@@ -397,8 +397,6 @@ class PMMGMobile {
                 var priceData = JSON.parse(xhr.responseText);
                 const keys = Object.keys(priceData);
                 this.prices = {};
-                this.prices["Test"] = 1000;
-                console.log(this.prices["Test"]);
                 keys.forEach(key => {
                     this.prices[key] = priceData[key];
                 });
@@ -540,16 +538,14 @@ class PMMGMobile {
                 const currency = document.evaluate("div[label/span[text()='Currency']]//select", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
                 if(type === "BUYING" || type === "SELLING")
                 {   // Buy/sell ads
-                    const unitPrice = parseFloat(totalPrice) / parseFloat(amount);
+                    const unitPrice = parseFloat(totalPrice.value) / parseFloat(amount.value);
                     var priceText = "";
-                    console.log(currency);
-                    console.log(unitPrice);
-                    if(currency != "" && currency != null && currency != "--" && currency != undefined){priceText += CurrencySymbols[currency];}
+                    if(currency.value != "" && currency.value != null && currency.value != "--" && currency.value != undefined){priceText += CurrencySymbols[currency.value];}
                     priceText += unitPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " ea";
 
-                    if(this.prices[commodity] != undefined)
+                    if(this.prices[commodity.value] != undefined)
                     {
-                        priceText += " | " + (this.prices[commodity] * parseFloat(amount)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
+                        priceText += " | " + (this.prices[commodity.value] * parseFloat(amount.value)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
                     }
                     const displayElement = document.createElement("div");
                     displayElement.textContent = priceText;
