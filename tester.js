@@ -523,16 +523,10 @@ class PMMGMobile {
         console.log(prices);
         this.cleanup("pmmg-lm-post");
         const container = document.getElementById("container");
-        var buffer;
-        console.log(container.firstChild == null);
-        console.log(container.firstChild.firstChild == null);
-        console.log(container.firstChild.firstChild.children[1] == null);
-        console.log(container.firstChild.firstChild.children[1].children[1] == null);
-        console.log(container.firstChild.firstChild.children[1].children[1].firstChild == null);
-        console.log(container.firstChild.firstChild.children[1].children[1].firstChild.firstChild == null);
 
-        try{buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;}
-        catch(e){return;}
+        if(container.firstChild.firstChild.children[1].children[1].firstChild == null){return;};
+
+        const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
         if(buffer.firstChild.firstChild.textContent.includes("Buffer / LMP "))
         {
             console.log("Successfully Found LM Post");
