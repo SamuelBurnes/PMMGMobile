@@ -664,15 +664,18 @@ class PMMGMobile {
 			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
 			if(buffer.firstChild.firstChild.textContent.includes(" / FLT "))
 			{
+				console.log("Found Fleet");
 				const fleet = buffer.children[1].firstChild.firstChild;
 				Array.from(fleet.children).forEach(ship => {
+					console.log(ship);
 					const timeLeftElem = ship.children[2].children[1];
-					if(timeLeftElem == null || timeLeftElem.firstChild == null){return;}
+					//if(timeLeftElem == null || timeLeftElem.firstChild == null){return;}
 					const duration = timeLeftElem.firstChild.textContent;
-					if(duration == undefined || duration == ""){return;}
+					//if(duration == undefined || duration == ""){return;}
 					const eta = this.convertDurationToETA(this.parseDuration(duration));
 					const etaElem = document.createElement("span");
 					etaElem.textContent = eta;
+					console.log(eta);
 					etaElem.classList.add("pmmg-fleet");
 					timeLeftElem.appendChild(etaElem);
 					
