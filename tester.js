@@ -416,6 +416,7 @@ class PMMGMobile {
 		this.lm_ads();
 		this.shipping_ads();
 		this.production_scroll();
+		this.fleet_etas();
 		window.setTimeout(() => this.loop(prices), 1000);
 	}
 	
@@ -651,7 +652,69 @@ class PMMGMobile {
 				const count = innerElem.firstChild.children.length;
 				prod.style.width = (count * 120) + "px";
 			}
+		} catch(e){}
+	}
+
+	fleet_etas()
+	{
+		this.cleanup("pmmg-fleet");
+		const container = document.getElementById("container");
+		try
+		{
+			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+			if(buffer.firstChild.firstChild.textContent.includes(" / FLT "))
+			{
+				const fleet = buffer.children[1].firstChild.firstChild;
+				Array.from(fleet.children).forEach(ship => {
+					const timeLeftElem = ship.children[2].children[1];
+					if(timeLeftElem == null || timeLeftElem.firstChild == null){return;}
+					const duration = timeLeftElem.firstChild.textContent;
+					if(duration == undefined || duration == ""){return;}
+					const eta = this.convertDurationToETA(this.parseDuration(duration));
+					const etaElem = document.createElement("span");
+					etaElem.textContent = eta;
+					etaElem.classList.add("pmmg-fleet");
+					timeLeftElem.appendChild(etaElem);
+					
+				});
+			}
 		} catch(e){console.log(e);}
+	}
+
+	convertDurationToETA(parsedSeconds){
+		const eta = new Date();
+		const now = new Date();
+		eta.setSeconds(eta.getSeconds() + parsedSeconds);
+		const diffTime = Math.abs(eta.getTime() - now.getTime());
+		const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+		
+		let ret = eta.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+		if (diffDays > 0) {
+			ret += ` +${diffDays}d`;
+		}
+		return ret;
+	}
+
+	parseDuration(duration) {
+		const days = duration.match(/(\d+)\s*d/);
+		const hours = duration.match(/(\d+)\s*h/);
+		const minutes = duration.match(/(\d+)\s*m/);
+		const seconds = duration.match(/(\d+)\s*s/);
+		
+		let parsedSeconds = 0;
+		if (days) {
+			parsedSeconds += parseInt(days[1]) * 86400;
+		}
+		if (hours) {
+			parsedSeconds += parseInt(hours[1]) * 3600;
+		}
+		if (minutes) {
+			parsedSeconds += parseInt(minutes[1]) * 60;
+		}
+		if (seconds) {
+			parsedSeconds += parseInt(seconds[1]);
+		}
+		return parsedSeconds;
 	}
 }
 
