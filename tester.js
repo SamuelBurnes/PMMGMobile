@@ -392,6 +392,7 @@ class PMMGMobile {
                 try
                 {
                     var priceData = JSON.parse(xhr.responseText);
+					console.log(priceData);
                     const keys = Object.keys(priceData);
                     keys.forEach(key => {
                         prices[key] = priceData[key];
@@ -567,7 +568,7 @@ class PMMGMobile {
 						}
 				}
 			}
-		} catch(e){console.log(e);}
+		} catch(e){}
         return;
     }
 }
