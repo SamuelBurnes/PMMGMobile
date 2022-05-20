@@ -472,8 +472,29 @@ class PMMGMobile {
 		return;
 	}
 
+    get_prices()
+    {
+        const webappid = "AKfycbyeZcb0azMICGhAUY2-1clwMpySbTH-5xXklw__tSSvLakKDCxaNaA2t0vySuzM25GUZA";
+        var xhr = new XMLHttpRequest();
+        xhr.ontimeout = function(){console.log("Error! Timed Out!");};
+
+        xhr.onreadystatechange = function()
+        {
+            if(xhr.readyState == XMLHttpRequest.DONE)
+            {
+                console.log(xhr.responseText);
+                return;
+            }
+        };
+        xhr.timeout = 10000;
+        xhr.open("GET", "https://script.google.com/macros/s/" + webappid + "/exec?mode=%22price%22", true);
+        xhr.send(null);
+        return;
+    }
+
 	
 }
 
 const runner = new PMMGMobile();
+runner.get_prices();
 runner.loop();
