@@ -417,7 +417,7 @@ class PMMGMobile {
         console.log(prices);
 		this.nots_recolor();
         this.lm_post(prices);
-		window.setTimeout(() => this.loop(), 1000);
+		window.setTimeout(() => this.loop(prices), 1000);
 	}
 	
 	cleanup(className)
