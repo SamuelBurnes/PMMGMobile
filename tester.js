@@ -386,6 +386,7 @@ class PMMGMobile {
                 {
                     console.log("Retreived Prices from Web App");
                     var priceData = JSON.parse(xhr.responseText);
+                    console.log(priceData);
                     Object.keys(priceData).forEach(key => {
                         prices[key] = priceData[key];
                     });
@@ -511,10 +512,10 @@ class PMMGMobile {
         {
             this.cleanup("pmmg-lm-post");
 			const container = document.getElementById("container");
-            const buffer = container.getElementsByClassName("w3HIYfQyJC+lIdMcsPCqcw== _56pSCfxxqOcQSCOkhqSPvQ== +q8qc++5UykD5qgam+YOvw==")[0];
-            if(buffer == undefined){return;}
+            const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
             if(buffer.firstChild.firstChild.textContent.includes("Buffer / LMP "))
 			{
+                console.log("Successfully Found LM Post");
                 const form = buffer.children[1].firstChild.firstChild.children[1].firstChild.firstChild.firstChild;
                 const type = form.children[0].children[1].firstChild.textContent;
                 const commodity = document.evaluate("div[label/span[text()='Commodity']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
