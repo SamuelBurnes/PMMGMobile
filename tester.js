@@ -405,7 +405,7 @@ class PMMGMobile {
             }
         };
         xhr.timeout = 10000;
-        xhr.open("GET", "https://script.google.com/macros/s/" + webappid + "/exec?mode=%22price%22", true);
+        xhr.open("GET", "shorturl.at/oxzDH", true);
         xhr.send(null);
         return;
     }
