@@ -517,52 +517,62 @@ class PMMGMobile {
     {
         this.cleanup("pmmg-lm-post");
         const container = document.getElementById("container");
+		try
+		{
+        	const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+			if(buffer.firstChild.firstChild.textContent.includes("Buffer / LMP "))
+			{
+				console.log("Successfully Found LM Post");
+				const form = buffer.children[1].firstChild.firstChild.children[1].firstChild.firstChild.firstChild;
+				const type = form.children[0].children[1].firstChild.textContent;
+				const commodity = document.evaluate("div[label/span[text()='Commodity']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+				const amount = document.evaluate("div[label/span[text()='Amount']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+				const totalPrice = document.evaluate("div[label/span[text()='Total price']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+				const currency = document.evaluate("div[label/span[text()='Currency']]//select", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+				if(type === "BUYING" || type === "SELLING")
+				{   // Buy/sell ads
+					const unitPrice = parseFloat(totalPrice.value) / parseFloat(amount.value);
+					var priceText = "";
+					if(currency.value != "" && currency.value != null && currency.value != "--" && currency.value != undefined){priceText += CurrencySymbols[currency.value];}
+					priceText += unitPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " ea";
+					if(prices != undefined && commodity.value != undefined && prices[commodity.value] != undefined)
+					{
+						priceText += " | " + (prices[commodity.value] * parseFloat(amount.value)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
+					}
+					const displayElement = document.createElement("div");
+					displayElement.textContent = priceText;
+					displayElement.classList.add("pmmg-lm-post");
+					const totalPriceDiv = form.children[4].children[1].firstChild.firstChild;
+					totalPriceDiv.insertBefore(displayElement, totalPriceDiv.children[0]);
 
-        if(container.firstChild.firstChild.children[1].children[1].firstChild == null){return;};
+				}
+				else
+				{   // Shipping ads
+					if(commodity.value != undefined && Materials[commodity.value] != undefined)
+					{
+						const weight = parseFloat(amount.value) * Materials[commodity.value][1];
+						const volume = parseFloat(amount.value) * Materials[commodity.value][2];
+						const displayedMeasure = weight >= volume ? weight : volume;
+						const units = weight >= volume ? "t" : "m³";
 
-        const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
-        if(buffer == null || buffer.firstChild == null || buffer.firstChild.firstChild == null){return;}
-        if(buffer.firstChild.firstChild.textContent.includes("Buffer / LMP "))
-        {
-            console.log("Successfully Found LM Post");
-            const form = buffer.children[1].firstChild.firstChild.children[1].firstChild.firstChild.firstChild;
-            const type = form.children[0].children[1].firstChild.textContent;
-            const commodity = document.evaluate("div[label/span[text()='Commodity']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-            const amount = document.evaluate("div[label/span[text()='Amount']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-            const totalPrice = document.evaluate("div[label/span[text()='Total price']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-            const currency = document.evaluate("div[label/span[text()='Currency']]//select", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-            if(type === "BUYING" || type === "SELLING")
-            {   // Buy/sell ads
-                const unitPrice = parseFloat(totalPrice.value) / parseFloat(amount.value);
-                var priceText = "";
-                if(currency.value != "" && currency.value != null && currency.value != "--" && currency.value != undefined){priceText += CurrencySymbols[currency.value];}
-                priceText += unitPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " ea";
+						var displayText = displayedMeasure.toLocaleString(undefined, {maximumFractionDigits: 0}) + " " + units + " | ";
+						if(currency.value != "" && currency.value != null && currency.value != "--" && currency.value != undefined){displayText += CurrencySymbols[currency.value];}
+						displayText += (parseFloat(totalPrice.value) / displayedMeasure).toLocaleString(undefined, {maximumFractionDigits: 2}) + " / " + units;
 
-                console.log(prices);
-                console.log(commodity.value);
-                console.log(prices[commodity.value]);
-                if(prices != undefined && commodity.value != undefined && prices[commodity.value] != undefined)
-                {
-                    priceText += " | " + (prices[commodity.value] * parseFloat(amount.value)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
-                }
-                const displayElement = document.createElement("div");
-                displayElement.textContent = priceText;
-                displayElement.classList.add("pmmg-lm-post");
-                const totalPriceDiv = form.children[4].children[1].firstChild.firstChild;
-                totalPriceDiv.insertBefore(displayElement, totalPriceDiv.children[0]);
-
-            }
-            else
-            {   // Shipping ads
-
-            }
-        }
+						const displayElement = document.createElement("div");
+						displayElement.textContent = priceText;
+						displayElement.classList.add("pmmg-lm-post");
+						const totalPriceDiv = form.children[4].children[1].firstChild.firstChild;
+						totalPriceDiv.insertBefore(displayElement, totalPriceDiv.children[0]);
+						}
+				}
+			}
+		} catch(e){}
         return;
     }
 }
 
 const runner = new PMMGMobile();
 var prices = {};
-console.log(prices);
 runner.get_prices(prices);
 runner.loop(prices);
