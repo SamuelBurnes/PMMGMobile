@@ -1,4 +1,11 @@
 console.log("PMMG Mobile Loaded");
+const CurrencySymbols = {
+	"CIS": "₡",
+	"AIC": "₳",
+	"NCC": "₦",
+	"ICA": "ǂ",
+	"ECD": "€",
+}
 // Words to search for, their types, and colors courtesy of Ray K
 // Searches must be lower case
 const Searchers = [
@@ -382,15 +389,16 @@ class PMMGMobile {
         {
             if(xhr.readyState == XMLHttpRequest.DONE)
             {
+                console.log("Retreived Prices from Web App");
+                var priceData = JSON.parse(xhr.responseText);
+                const keys = Object.keys(priceData);
+                console.log(keys);
+                keys.forEach(key => {
+                    this.prices[key] = priceData[key];
+                });
                 try
                 {
-                    console.log("Retreived Prices from Web App");
-                    var priceData = JSON.parse(xhr.responseText);
-                    const keys = Object.keys(priceData);
-                    console.log(keys);
-                    keys.forEach(key => {
-                        prices[key] = priceData[key];
-                    });
+                    
                 }
                 catch(SyntaxError)
                 {
@@ -526,7 +534,21 @@ class PMMGMobile {
                 const currency = document.evaluate("div[label/span[text()='Currency']]//select", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
                 if(type === "BUYING" || type === "SELLING")
                 {   // Buy/sell ads
-                    console.log(commodity.value + " " + amount.value + " " + totalPrice.value + " " + currency.value);
+                    const unitPrice = parseFloat(totalPrice) / parseFloat(amount);
+                    var priceText = "";
+                    if(currency != "" && currency != null){priceText += CurrencySymbols[currency];}
+                    priceText += unitPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " ea";
+
+                    if(prices[commodity] != undefined)
+                    {
+                        priceText += " | " + (prices[commodity] * parseFloat(amount)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
+                    }
+                    const displayElement = document.createElement("div");
+                    displayElement.textContent = priceText;
+                    displayElement.classList.add("pmmg-lm-post");
+                    const totalPriceDiv = form.children[4].children[1].firstChild.firstChild;
+                    totalPriceDiv.insertBefore(displayElement, totalPriceDiv.children[0]);
+
                 }
                 else
                 {   // Shipping ads
