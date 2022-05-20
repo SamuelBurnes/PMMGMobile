@@ -396,6 +396,9 @@ class PMMGMobile {
                 console.log("Retreived Prices from Web App");
                 var priceData = JSON.parse(xhr.responseText);
                 const keys = Object.keys(priceData);
+                this.prices = {};
+                this.prices["Test"] = 1000;
+                console.log(this.prices["Test"]);
                 keys.forEach(key => {
                     this.prices[key] = priceData[key];
                 });
@@ -539,7 +542,9 @@ class PMMGMobile {
                 {   // Buy/sell ads
                     const unitPrice = parseFloat(totalPrice) / parseFloat(amount);
                     var priceText = "";
-                    if(currency != "" && currency != null){priceText += CurrencySymbols[currency];}
+                    console.log(currency);
+                    console.log(unitPrice);
+                    if(currency != "" && currency != null && currency != "--" && currency != undefined){priceText += CurrencySymbols[currency];}
                     priceText += unitPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " ea";
 
                     if(this.prices[commodity] != undefined)
