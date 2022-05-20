@@ -520,9 +520,8 @@ class PMMGMobile {
 		try
 		{
         	const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
-			if(buffer.firstChild.firstChild.textContent.includes("Buffer / LMP "))
+			if(buffer.firstChild.firstChild.textContent.includes("Buffer / LMP ") || buffer.firstChild.firstChild.textContent.includes("Local Markets / LMP "))
 			{
-				console.log("Successfully Found LM Post");
 				const form = buffer.children[1].firstChild.firstChild.children[1].firstChild.firstChild.firstChild;
 				const type = form.children[0].children[1].firstChild.textContent;
 				const commodity = document.evaluate("div[label/span[text()='Commodity']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
@@ -570,6 +569,36 @@ class PMMGMobile {
 		} catch(e){}
         return;
     }
+
+	lm_ads()
+	{
+		this.cleanup("pmmg-lm-ads");
+		const container = document.getElementById("container");
+		try
+		{
+			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+			if(buffer.firstChild.firstChild.textContent.includes("Buffer / LM ") || buffer.firstChild.firstChild.textContent.includes("Local Markets / LM "))
+			{
+				console.log("LM Detected");
+				const board = buffer.children[1].firstChild.firstChild.children[4];
+				Array.from(board.children).forEach(ad => {
+					const text = ad.firstChild.children[1].textContent;
+					console.log(text);
+					const matches = text && text.match(/(BUYING|SELLING|CORP)\s(\d+)\s.*\s@\s([\d,.]+)\s[A-Z]+\sfor/);
+					if(matches && matches.length > 3)
+					{
+						const count = parseInt(matches[2]);
+						const totalCents = parseInt(matches[3].replace(/[,.]/g, ''));
+						const eachSpan = document.createElement("span");
+						eachSpan.textContent = " (" + (totalCents / (count * 100)).toLocaleString(undefined, {maximumFractionDigits: 2}) + " ea)";
+						eachSpan.classList.add("pmmg-lm-ads");
+						ad.firstChild.children[1].children[2].appendChild(eachSpan);
+					}
+				});
+			}
+		} catch(e){console.log(e);}
+		return;
+	}
 }
 
 const runner = new PMMGMobile();
