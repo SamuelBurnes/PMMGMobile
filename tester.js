@@ -391,8 +391,8 @@ class PMMGMobile {
                 console.log("Retreived Prices from Web App");
                 try
                 {
+					console.log(xhr.responseText);
                     var priceData = JSON.parse(xhr.responseText);
-					console.log(priceData);
                     const keys = Object.keys(priceData);
                     keys.forEach(key => {
                         prices[key] = priceData[key];
