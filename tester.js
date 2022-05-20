@@ -583,7 +583,7 @@ class PMMGMobile {
 				console.log("LM Detected");
 				const board = buffer.children[1].firstChild.firstChild.children[4];
 				Array.from(board.children).forEach(ad => {
-					const text = ad.firstChild.children[1].textContent;
+					var text = ad.firstChild.children[1].textContent;
 					console.log(text);
 					const matches = text && text.match(/(BUYING|SELLING|CORP)\s(\d+)\s.*\s@\s([\d,.]+)\s[A-Z]+\sfor/);
 					if(matches && matches.length > 3)
