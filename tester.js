@@ -413,7 +413,8 @@ class PMMGMobile {
     }
 
 	loop(prices){
-        console.log("Loop " + prices);
+        console.log("Loop");
+        console.log(prices);
 		this.nots_recolor();
         this.lm_post(prices);
 		window.setTimeout(() => this.loop(), 1000);
@@ -518,49 +519,48 @@ class PMMGMobile {
 
     lm_post(prices)
     {
-        console.log("LM Post " + prices);
-        try
+        console.log("LM Price");
+        console.log(prices);
+        this.cleanup("pmmg-lm-post");
+        const container = document.getElementById("container");
+        var buffer;
+        try{buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;}
+        catch(e){return;}
+        if(buffer.firstChild.firstChild.textContent.includes("Buffer / LMP "))
         {
-            this.cleanup("pmmg-lm-post");
-			const container = document.getElementById("container");
-            const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
-            if(buffer.firstChild.firstChild.textContent.includes("Buffer / LMP "))
-			{
-                console.log("Successfully Found LM Post");
-                const form = buffer.children[1].firstChild.firstChild.children[1].firstChild.firstChild.firstChild;
-                const type = form.children[0].children[1].firstChild.textContent;
-                const commodity = document.evaluate("div[label/span[text()='Commodity']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-                const amount = document.evaluate("div[label/span[text()='Amount']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-                const totalPrice = document.evaluate("div[label/span[text()='Total price']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-                const currency = document.evaluate("div[label/span[text()='Currency']]//select", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-                if(type === "BUYING" || type === "SELLING")
-                {   // Buy/sell ads
-                    const unitPrice = parseFloat(totalPrice.value) / parseFloat(amount.value);
-                    var priceText = "";
-                    if(currency.value != "" && currency.value != null && currency.value != "--" && currency.value != undefined){priceText += CurrencySymbols[currency.value];}
-                    priceText += unitPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " ea";
+            console.log("Successfully Found LM Post");
+            const form = buffer.children[1].firstChild.firstChild.children[1].firstChild.firstChild.firstChild;
+            const type = form.children[0].children[1].firstChild.textContent;
+            const commodity = document.evaluate("div[label/span[text()='Commodity']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            const amount = document.evaluate("div[label/span[text()='Amount']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            const totalPrice = document.evaluate("div[label/span[text()='Total price']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            const currency = document.evaluate("div[label/span[text()='Currency']]//select", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            if(type === "BUYING" || type === "SELLING")
+            {   // Buy/sell ads
+                const unitPrice = parseFloat(totalPrice.value) / parseFloat(amount.value);
+                var priceText = "";
+                if(currency.value != "" && currency.value != null && currency.value != "--" && currency.value != undefined){priceText += CurrencySymbols[currency.value];}
+                priceText += unitPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " ea";
 
-                    console.log(prices);
-                    console.log(commodity.value);
-                    console.log(prices[commodity.value]);
-                    if(prices != undefined && commodity.value != undefined && prices[commodity.value] != undefined)
-                    {
-                        priceText += " | " + (prices[commodity.value] * parseFloat(amount.value)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
-                    }
-                    const displayElement = document.createElement("div");
-                    displayElement.textContent = priceText;
-                    displayElement.classList.add("pmmg-lm-post");
-                    const totalPriceDiv = form.children[4].children[1].firstChild.firstChild;
-                    totalPriceDiv.insertBefore(displayElement, totalPriceDiv.children[0]);
-
+                console.log(prices);
+                console.log(commodity.value);
+                console.log(prices[commodity.value]);
+                if(prices != undefined && commodity.value != undefined && prices[commodity.value] != undefined)
+                {
+                    priceText += " | " + (prices[commodity.value] * parseFloat(amount.value)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
                 }
-                else
-                {   // Shipping ads
+                const displayElement = document.createElement("div");
+                displayElement.textContent = priceText;
+                displayElement.classList.add("pmmg-lm-post");
+                const totalPriceDiv = form.children[4].children[1].firstChild.firstChild;
+                totalPriceDiv.insertBefore(displayElement, totalPriceDiv.children[0]);
 
-                }
             }
-        } catch(e)
-        {console.log(e);}
+            else
+            {   // Shipping ads
+
+            }
+        }
         return;
     }
 }
