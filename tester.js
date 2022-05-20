@@ -377,13 +377,8 @@ const Materials = {
 }
 
 class PMMGMobile {
-    prices;    // Corp prices loaded through a webapp
-    constructor()
-    {
-        this.prices = {};
-    }
 
-    get_prices()
+    get_prices(prices)
     {
         const webappid = "AKfycbyeZcb0azMICGhAUY2-1clwMpySbTH-5xXklw__tSSvLakKDCxaNaA2t0vySuzM25GUZA";
         var xhr = new XMLHttpRequest();
@@ -398,10 +393,10 @@ class PMMGMobile {
                 {
                     var priceData = JSON.parse(xhr.responseText);
                     const keys = Object.keys(priceData);
-                    this.prices = {};
                     keys.forEach(key => {
-                        this.prices[key] = priceData[key];
+                        prices[key] = priceData[key];
                     });
+                    console.log(prices);
                 }
                 catch(SyntaxError)
                 {
@@ -416,9 +411,9 @@ class PMMGMobile {
         return;
     }
 
-	loop(){
+	loop(prices){
 		this.nots_recolor();
-        this.lm_post();
+        this.lm_post(prices);
 		window.setTimeout(() => this.loop(), 1000);
 	}
 	
@@ -519,7 +514,7 @@ class PMMGMobile {
 		return;
 	}
 
-    lm_post()
+    lm_post(prices)
     {
         try
         {
@@ -542,12 +537,12 @@ class PMMGMobile {
                     if(currency.value != "" && currency.value != null && currency.value != "--" && currency.value != undefined){priceText += CurrencySymbols[currency.value];}
                     priceText += unitPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " ea";
 
-                    console.log(this.prices);
+                    console.log(prices);
                     console.log(commodity.value);
-                    console.log(this.prices[commodity.value]);
-                    if(this.prices[commodity.value] != undefined)
+                    console.log(prices[commodity.value]);
+                    if(prices[commodity.value] != undefined)
                     {
-                        priceText += " | " + (this.prices[commodity.value] * parseFloat(amount.value)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
+                        priceText += " | " + (prices[commodity.value] * parseFloat(amount.value)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
                     }
                     const displayElement = document.createElement("div");
                     displayElement.textContent = priceText;
@@ -568,5 +563,6 @@ class PMMGMobile {
 }
 
 const runner = new PMMGMobile();
-runner.get_prices();
-runner.loop();
+var prices = {};
+runner.get_prices(prices);
+runner.loop(prices);
