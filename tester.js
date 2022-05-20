@@ -370,6 +370,39 @@ const Materials = {
 }
 
 class PMMGMobile {
+    prices = {};    // Corp prices loaded through a webapp
+
+    get_prices()
+    {
+        const webappid = "AKfycbyeZcb0azMICGhAUY2-1clwMpySbTH-5xXklw__tSSvLakKDCxaNaA2t0vySuzM25GUZA";
+        var xhr = new XMLHttpRequest();
+        xhr.ontimeout = function(){console.log("Error! Timed Out!");};
+
+        xhr.onreadystatechange = function()
+        {
+            if(xhr.readyState == XMLHttpRequest.DONE)
+            {
+                try
+                {
+                    console.log("Retreived Prices from Web App");
+                    var priceData = JSON.parse(xhr.responseText);
+                    Object.keys(priceData).forEach(key => {
+                        prices[key] = priceData[key];
+                    });
+                }
+                catch(SyntaxError)
+                {
+                    console.log("Bad Data from Web App");
+                }
+                return;
+            }
+        };
+        xhr.timeout = 10000;
+        xhr.open("GET", "https://script.google.com/macros/s/" + webappid + "/exec?mode=%22price%22", true);
+        xhr.send(null);
+        return;
+    }
+
 	loop(){
 		this.nots_recolor();
 		window.setTimeout(() => this.loop(), 1000);
@@ -381,7 +414,7 @@ class PMMGMobile {
 			elem.parentNode.removeChild(elem);
 		});
 	}
-
+    
 	nots_recolor()
 	{
 		try
@@ -472,27 +505,35 @@ class PMMGMobile {
 		return;
 	}
 
-    get_prices()
+    lm_post()
     {
-        const webappid = "AKfycbyeZcb0azMICGhAUY2-1clwMpySbTH-5xXklw__tSSvLakKDCxaNaA2t0vySuzM25GUZA";
-        var xhr = new XMLHttpRequest();
-        xhr.ontimeout = function(){console.log("Error! Timed Out!");};
-
-        xhr.onreadystatechange = function()
+        try
         {
-            if(xhr.readyState == XMLHttpRequest.DONE)
-            {
-                console.log(xhr.responseText);
-                return;
+            this.cleanup("pmmg-lm-post");
+			const container = document.getElementById("container");
+            const buffer = container.getElementsByClassName("w3HIYfQyJC+lIdMcsPCqcw== _56pSCfxxqOcQSCOkhqSPvQ== +q8qc++5UykD5qgam+YOvw==")[0];
+            if(buffer == undefined){return;}
+            if(buffer.firstChild.firstChild.textContent.includes("Buffer / LMP "))
+			{
+                //const form = buffer.children[1].firstChild.firstChild.children[1].firstChild.firstChild.firstChild;
+                const type = form.children[0].children[1].firstChild.textContent;
+                const commodity = document.evaluate("div[label/span[text()='Commodity']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+                const amount = document.evaluate("div[label/span[text()='Amount']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+                const totalPrice = document.evaluate("div[label/span[text()='Total price']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+                const currency = document.evaluate("div[label/span[text()='Currency']]//select", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+                if(type === "BUYING" || type === "SELLING")
+                {   // Buy/sell ads
+                    console.log(commodity.value + " " + amount.value + " " + totalPrice.value + " " + currency.value);
+                }
+                else
+                {   // Shipping ads
+
+                }
             }
-        };
-        xhr.timeout = 10000;
-        xhr.open("GET", "https://script.google.com/macros/s/" + webappid + "/exec?mode=%22price%22", true);
-        xhr.send(null);
+        } catch(e)
+        {console.log(e);}
         return;
     }
-
-	
 }
 
 const runner = new PMMGMobile();
