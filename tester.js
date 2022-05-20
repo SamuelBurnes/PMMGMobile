@@ -662,7 +662,7 @@ class PMMGMobile {
 		try
 		{
 			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
-			if(buffer.firstChild.firstChild.textContent.includes(" / FLT "))
+			if(buffer.firstChild.firstChild.textContent.includes(" / FLT"))
 			{
 				console.log("Found Fleet");
 				const fleet = buffer.children[1].firstChild.firstChild;
