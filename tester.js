@@ -386,8 +386,9 @@ class PMMGMobile {
                 {
                     console.log("Retreived Prices from Web App");
                     var priceData = JSON.parse(xhr.responseText);
-                    console.log(priceData);
-                    Object.keys(priceData).forEach(key => {
+                    const keys = Object.keys(priceData);
+                    console.log(keys);
+                    keys.forEach(key => {
                         prices[key] = priceData[key];
                     });
                 }
@@ -406,6 +407,7 @@ class PMMGMobile {
 
 	loop(){
 		this.nots_recolor();
+        this.lm_post();
 		window.setTimeout(() => this.loop(), 1000);
 	}
 	
