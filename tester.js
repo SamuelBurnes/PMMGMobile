@@ -380,6 +380,7 @@ class PMMGMobile {
 
     get_prices(prices)
     {
+        console.log(prices);
         const webappid = "AKfycbyeZcb0azMICGhAUY2-1clwMpySbTH-5xXklw__tSSvLakKDCxaNaA2t0vySuzM25GUZA";
         var xhr = new XMLHttpRequest();
         xhr.ontimeout = function(){console.log("Error! Timed Out!");};
@@ -412,6 +413,7 @@ class PMMGMobile {
     }
 
 	loop(prices){
+        console.log("Loop " + prices);
 		this.nots_recolor();
         this.lm_post(prices);
 		window.setTimeout(() => this.loop(), 1000);
@@ -516,6 +518,7 @@ class PMMGMobile {
 
     lm_post(prices)
     {
+        console.log("LM Post " + prices);
         try
         {
             this.cleanup("pmmg-lm-post");
@@ -540,7 +543,7 @@ class PMMGMobile {
                     console.log(prices);
                     console.log(commodity.value);
                     console.log(prices[commodity.value]);
-                    if(prices[commodity.value] != undefined)
+                    if(prices != undefined && commodity.value != undefined && prices[commodity.value] != undefined)
                     {
                         priceText += " | " + (prices[commodity.value] * parseFloat(amount.value)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
                     }
@@ -564,5 +567,6 @@ class PMMGMobile {
 
 const runner = new PMMGMobile();
 var prices = {};
+console.log(prices);
 runner.get_prices(prices);
 runner.loop(prices);
