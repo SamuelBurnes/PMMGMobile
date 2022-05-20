@@ -415,6 +415,7 @@ class PMMGMobile {
         this.lm_post(prices);
 		this.lm_ads();
 		this.shipping_ads();
+		this.production_scroll();
 		window.setTimeout(() => this.loop(prices), 1000);
 	}
 	
@@ -631,6 +632,26 @@ class PMMGMobile {
 			}
 		} catch(e){}
 		return;
+	}
+
+	production_scroll()
+	{
+		this.cleanup("pmmg-production-scroll");
+		const container = document.getElementById("container");
+		try
+		{
+			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+			if(buffer.firstChild.firstChild.textContent.includes("Buffer / PROD "))
+			{
+				const prod = buffer.children[1].firstChild;
+				const innerElem = prod.children[1].firstChild.firstChild;
+				innerElem.style.overflowX = "hidden";
+				innerElem.style.overflowY = "scroll";
+
+				const count = innerElem.firstChild.children.length;
+				prod.style.width = (count * 120) + "px";
+			}
+		} catch(e){console.log(e);}
 	}
 }
 
