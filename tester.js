@@ -394,15 +394,14 @@ class PMMGMobile {
             if(xhr.readyState == XMLHttpRequest.DONE)
             {
                 console.log("Retreived Prices from Web App");
-                var priceData = JSON.parse(xhr.responseText);
-                const keys = Object.keys(priceData);
-                this.prices = {};
-                keys.forEach(key => {
-                    this.prices[key] = priceData[key];
-                });
                 try
                 {
-                    
+                    var priceData = JSON.parse(xhr.responseText);
+                    const keys = Object.keys(priceData);
+                    this.prices = {};
+                    keys.forEach(key => {
+                        this.prices[key] = priceData[key];
+                    });
                 }
                 catch(SyntaxError)
                 {
@@ -543,6 +542,9 @@ class PMMGMobile {
                     if(currency.value != "" && currency.value != null && currency.value != "--" && currency.value != undefined){priceText += CurrencySymbols[currency.value];}
                     priceText += unitPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " ea";
 
+                    console.log(this.prices);
+                    console.log(commodity.value);
+                    console.log(this.prices[commodity.value]);
                     if(this.prices[commodity.value] != undefined)
                     {
                         priceText += " | " + (this.prices[commodity.value] * parseFloat(amount.value)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " Total Corp";
