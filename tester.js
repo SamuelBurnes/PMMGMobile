@@ -515,7 +515,7 @@ class PMMGMobile {
             if(buffer == undefined){return;}
             if(buffer.firstChild.firstChild.textContent.includes("Buffer / LMP "))
 			{
-                //const form = buffer.children[1].firstChild.firstChild.children[1].firstChild.firstChild.firstChild;
+                const form = buffer.children[1].firstChild.firstChild.children[1].firstChild.firstChild.firstChild;
                 const type = form.children[0].children[1].firstChild.textContent;
                 const commodity = document.evaluate("div[label/span[text()='Commodity']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
                 const amount = document.evaluate("div[label/span[text()='Amount']]//input", form, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
