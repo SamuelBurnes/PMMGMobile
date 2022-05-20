@@ -414,6 +414,7 @@ class PMMGMobile {
 		this.nots_recolor();
         this.lm_post(prices);
 		this.lm_ads();
+		this.shipping_ads();
 		window.setTimeout(() => this.loop(prices), 1000);
 	}
 	
@@ -580,25 +581,55 @@ class PMMGMobile {
 			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
 			if(buffer.firstChild.firstChild.textContent.includes("Buffer / LM ") || buffer.firstChild.firstChild.textContent.includes("Local Markets / LM "))
 			{
-				console.log("LM Detected");
 				const board = buffer.children[1].firstChild.firstChild.children[4];
 				Array.from(board.children).forEach(ad => {
 					var text = ad.firstChild.children[1].textContent;
-					console.log(text);
-					const matches = text && text.match(/(BUYING|SELLING|CORP)\s(\d+)\s.*\s@\s([\d,.]+)\s[A-Z]+\sfor/);
+					const matches = text && text.match(/(BUYING|SELLING)\s(\d+)\s.*\s@\s([\d,.]+)\s[A-Z]+\sfor/);
 					if(matches && matches.length > 3)
 					{
 						const count = parseInt(matches[2]);
 						const totalCents = parseInt(matches[3].replace(/[,.]/g, ''));
-						const eachSpan = document.createElement("span");
-						eachSpan.textContent = " (" + (totalCents / (count * 100)).toLocaleString(undefined, {maximumFractionDigits: 2}) + " ea)";
-						eachSpan.classList.add("pmmg-lm-ads");
+						if(totalCents <= 1){return;}
+
 						text = text.replace(/ \([a-zA-Z0-9.,]* ea\)/, "");
 						ad.firstChild.children[1].textContent = text.replace(" for", " (" + (totalCents / (count * 100)).toLocaleString(undefined, {maximumFractionDigits: 2}) + " ea) for")
 					}
 				});
 			}
-		} catch(e){console.log(e);}
+		} catch(e){}
+		return;
+	}
+
+	shipping_ads()
+	{
+		this.cleanup("pmmg-ship-ads");
+		const container = document.getElementById("container");
+		try
+		{
+			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+			if(buffer.firstChild.firstChild.textContent.includes("Buffer / LM ") || buffer.firstChild.firstChild.textContent.includes("Local Markets / LM "))
+			{
+				const board = buffer.children[1].firstChild.firstChild.children[4];
+				Array.from(board.children).forEach(ad => {
+					var text = ad.firstChild.children[1].textContent;
+					console.log(text);
+					const matches = text && text.match(/(?:SHIPPING)\s([\d,.]+)t\s\/\s([\d,.]+)m³\s@\s([\d,.]+)\s[A-Z]+\sfrom/);
+					if(matches && matches.length > 3)
+					{
+						const totalCents = parseInt(matches[3].replace(/[,.]/g, ''));
+						const tonnage = parseFloat(matches[1].replace(/[,.]/g, '')) / 100;
+						const size = parseFloat(matches[2].replace(/[,.]/g, '')) / 100;
+						
+						const unit = tonnage > size ? 't' : 'm³';
+						const count = tonnage > size ? tonnage : size;
+						const perItem = (totalCents / count / 100).toLocaleString(undefined, {maximumFractionDigits: 1});
+
+						text = text.replace(/ \([a-zA-Z0-9.,]*\/(t|m³)\)/, "");
+						ad.firstChild.children[1].textContent = text.replace(" from", " (" + perItem + "/" + unit + ") from");
+					}
+				});
+			}
+		} catch(e){}
 		return;
 	}
 }
