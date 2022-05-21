@@ -700,6 +700,7 @@ class PMMGMobile {
 				totalDurationDiv.parentNode.appendChild(etaElem);
 			}
 		}
+		catch(e){console.log(e);}
 	}
 
 	convertDurationToETA(parsedSeconds){
