@@ -417,6 +417,7 @@ class PMMGMobile {
 		this.shipping_ads();
 		this.production_scroll();
 		this.fleet_etas();
+		this.flight_etas();
 		window.setTimeout(() => this.loop(prices), 1000);
 	}
 	
@@ -679,6 +680,26 @@ class PMMGMobile {
 				});
 			}
 		} catch(e){}
+	}
+
+	flight_etas()
+	{
+		this.cleanup("pmmg-flight");
+		const container = document.getElementById("container");
+		try
+		{
+			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+			if(buffer.firstChild.firstChild.textContent.includes(" / SFC "))
+			{
+				const table = buffer.children[1].firstChild.children[1].children[10];
+				const totalDurationDiv = table.children[1].firstChild.children[3].firstChild;
+				const eta = this.convertDurationToETA(this.parseDuration(totalDurationDiv.textContent));
+				const etaElem = document.createElement("span");
+				etaElem.textContent = eta;
+				etaElem.classList.add("pmmg-flight");
+				totalDurationDiv.parentNode.appendChild(etaElem);
+			}
+		}
 	}
 
 	convertDurationToETA(parsedSeconds){
