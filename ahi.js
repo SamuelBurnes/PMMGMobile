@@ -614,7 +614,6 @@ class PMMGMobile {
 				const board = buffer.children[1].firstChild.firstChild.children[4];
 				Array.from(board.children).forEach(ad => {
 					var text = ad.firstChild.children[1].textContent;
-					console.log(text);
 					const matches = text && text.match(/(?:SHIPPING)\s([\d,.]+)t\s\/\s([\d,.]+)m³\s@\s([\d,.]+)\s[A-Z]+\sfrom/);
 					if(matches && matches.length > 3)
 					{

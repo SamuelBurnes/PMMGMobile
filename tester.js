@@ -654,6 +654,7 @@ class PMMGMobile {
 				prod.style.width = (count * 120) + "px";
 			}
 		} catch(e){}
+		return;
 	}
 
 	fleet_etas()
@@ -680,6 +681,7 @@ class PMMGMobile {
 				});
 			}
 		} catch(e){}
+		return;
 	}
 
 	flight_etas()
@@ -700,7 +702,8 @@ class PMMGMobile {
 				totalDurationDiv.parentNode.appendChild(etaElem);
 			}
 		}
-		catch(e){console.log(e);}
+		catch(e){}
+		return;
 	}
 
 	convertDurationToETA(parsedSeconds){
