@@ -425,13 +425,10 @@ class PMMGMobile {
 	authenticate(pmmgdata)
 	{
 		pmmgdata = JSON.parse(localStorage.getItem("pmmginfo"));
-		if(pmmgdata == null)
-		{
-			username = null;
-			apikey = null;
-			webappid = null;
-		}
-		else
+		var username = null;
+		var apikey = null;
+		var webappid = null;
+		if(pmmgdata != null)
 		{
 			username = pmmgdata[0];
 			apikey = pmmgdata[1];
