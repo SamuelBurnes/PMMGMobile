@@ -412,7 +412,7 @@ class PMMGMobile {
 		
 		var pmmgdata = [null, null, null]
 		this.authenticate(pmmgdata);
-		if(prices == null && pmmgdata[2] != null)
+		if(Object.keys(prices).length == 0 && pmmgdata[2] != null)
 		{
 			get_prices(prices, pmmgdata[2]);
 		}
@@ -843,5 +843,5 @@ class PMMGMobile {
 }
 
 const runner = new PMMGMobile();
-var prices = null;
+var prices = {};
 runner.loop(prices);
