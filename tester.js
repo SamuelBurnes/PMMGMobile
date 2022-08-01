@@ -377,9 +377,6 @@ const Materials = {
 }
 
 class PMMGMobile {
-	private username;
-	private apikey;
-	private webappid;
     get_prices(prices)
     {
         const webappid = "AKfycbyeZcb0azMICGhAUY2-1clwMpySbTH-5xXklw__tSSvLakKDCxaNaA2t0vySuzM25GUZA";
@@ -413,7 +410,8 @@ class PMMGMobile {
     }
 
 	loop(prices){
-		this.authenticate();
+		var pmmgdata = [null, null, null]
+		this.authenticate(pmmgdata);
 		this.nots_recolor();
         this.lm_post(prices);
 		this.lm_ads();
@@ -424,9 +422,9 @@ class PMMGMobile {
 		window.setTimeout(() => this.loop(prices), 1000);
 	}
 	
-	authenticate()
+	authenticate(pmmgdata)
 	{
-		var pmmgdata = JSON.parse(localStorage.getItem("pmmginfo"));
+		pmmgdata = JSON.parse(localStorage.getItem("pmmginfo"));
 		if(pmmgdata == null)
 		{
 			username = null;
