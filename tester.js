@@ -431,20 +431,20 @@ class PMMGMobile {
 	
 	authenticate(pmmgdata)
 	{
-		pmmgdata = JSON.parse(localStorage.getItem("pmmginfo"));
+		var gatheredData = JSON.parse(localStorage.getItem("pmmginfo"));
 		var username = null;
 		var apikey = null;
 		var webappid = null;
-		if(pmmgdata != null)
+		if(gatheredData != null)
 		{
-			username = pmmgdata[0];
-			apikey = pmmgdata[1];
-			webappid = pmmgdata[2];
+			username = gatheredData[0];
+			apikey = gatheredData[1];
+			webappid = gatheredData[2];
+			
 		}
-		else
-		{
-			pmmgdata = [null, null, null];
-		}
+		pmmgdata[0] = username;
+		pmmgdata[1] = apikey;
+		pmmgdata[2] = webappid;
 		// Wait for authenticate buffer
 		const container = document.getElementById("container");
 		try
