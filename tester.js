@@ -417,7 +417,7 @@ class PMMGMobile {
 		console.log(pmmgdata[2]);
 		if(Object.keys(prices).length === 0 && pmmgdata[2] != null)
 		{
-			get_prices(prices, pmmgdata[2]);
+			this.get_prices(prices, pmmgdata[2]);
 		}
 		this.nots_recolor();
         this.lm_post(prices);
