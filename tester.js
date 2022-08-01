@@ -434,6 +434,10 @@ class PMMGMobile {
 			apikey = pmmgdata[1];
 			webappid = pmmgdata[2];
 		}
+		else
+		{
+			pmmgdata = [null, null, null];
+		}
 		console.log(pmmgdata);
 		// Wait for authenticate buffer
 		const container = document.getElementById("container");
