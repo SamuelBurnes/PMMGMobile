@@ -377,9 +377,8 @@ const Materials = {
 }
 
 class PMMGMobile {
-    get_prices(prices)
+    get_prices(prices, webappid)
     {
-        const webappid = "AKfycbyeZcb0azMICGhAUY2-1clwMpySbTH-5xXklw__tSSvLakKDCxaNaA2t0vySuzM25GUZA";
         var xhr = new XMLHttpRequest();
         xhr.ontimeout = function(){console.log("Error! Timed Out!");};
 
@@ -410,8 +409,13 @@ class PMMGMobile {
     }
 
 	loop(prices){
+		
 		var pmmgdata = [null, null, null]
 		this.authenticate(pmmgdata);
+		if(prices == null && pmmgdata[2] != null)
+		{
+			get_prices(prices, pmmgdata[2]);
+		}
 		this.nots_recolor();
         this.lm_post(prices);
 		this.lm_ads();
@@ -438,7 +442,6 @@ class PMMGMobile {
 		{
 			pmmgdata = [null, null, null];
 		}
-		console.log(pmmgdata);
 		// Wait for authenticate buffer
 		const container = document.getElementById("container");
 		try
@@ -711,7 +714,6 @@ class PMMGMobile {
 				const board = buffer.children[1].firstChild.firstChild.children[4];
 				Array.from(board.children).forEach(ad => {
 					var text = ad.firstChild.children[1].textContent;
-					console.log(text);
 					const matches = text && text.match(/(?:SHIPPING)\s([\d,.]+)t\s\/\s([\d,.]+)m³\s@\s([\d,.]+)\s[A-Z]+\sfrom/);
 					if(matches && matches.length > 3)
 					{
@@ -841,6 +843,5 @@ class PMMGMobile {
 }
 
 const runner = new PMMGMobile();
-var prices = {};
-runner.get_prices(prices);
+var prices = null;
 runner.loop(prices);
