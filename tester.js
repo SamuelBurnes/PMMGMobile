@@ -377,7 +377,9 @@ const Materials = {
 }
 
 class PMMGMobile {
-
+	private username;
+	private apikey;
+	private webappid;
     get_prices(prices)
     {
         const webappid = "AKfycbyeZcb0azMICGhAUY2-1clwMpySbTH-5xXklw__tSSvLakKDCxaNaA2t0vySuzM25GUZA";
@@ -411,6 +413,7 @@ class PMMGMobile {
     }
 
 	loop(prices){
+		this.authenticate();
 		this.nots_recolor();
         this.lm_post(prices);
 		this.lm_ads();
@@ -419,6 +422,100 @@ class PMMGMobile {
 		this.fleet_etas();
 		this.flight_etas();
 		window.setTimeout(() => this.loop(prices), 1000);
+	}
+	
+	authenticate()
+	{
+		var pmmgdata = JSON.parse(localStorage.getItem("pmmginfo"));
+		if(pmmgdata == null)
+		{
+			username = null;
+			apikey = null;
+			webappid = null;
+		}
+		else
+		{
+			username = pmmgdata[0];
+			apikey = pmmgdata[1];
+			webappid = pmmgdata[2];
+		}
+		console.log(pmmgdata);
+		// Wait for authenticate buffer
+		const container = document.getElementById("container");
+		try
+		{
+			const buffer = container.firstChild.firstChild.children[1].children[1].firstChild.firstChild;
+			if(buffer.firstChild.firstChild.textContent.toUpperCase().includes(" / XIT PMMG"))
+			{
+				const tile = buffer.children[1].firstChild;
+				tile.style.background = "#20314E";
+				tile.style.position = "static";
+				var namelabel;
+				var nameinput;
+				var apiinput;
+				var apilabel;
+				var weblabel;
+				var webinput;
+				if(tile.children.length == 0)
+				{
+					namelabel = document.createElement("label");
+					namelabel.textContent = "FIO Username";
+					namelabel.style.fontSize = "14px";
+					namelabel.style.color = "#ffffff";
+					tile.appendChild(namelabel);
+					nameinput = document.createElement("input");
+					nameinput.style.backgroundColor = "#42361d";
+					nameinput.style.borderBottom = "1px solid #8d6411";
+					nameinput.style.padding = "2px";
+					nameinput.style.marginBottom = "5px";
+					nameinput.addEventListener("input", function(){
+						pmmgdata[0] = nameinput.value || "";
+						localStorage.setItem("pmmginfo", JSON.stringify(pmmgdata));
+					});
+					if(username != null && username != undefined){nameinput.value = username;}
+					tile.appendChild(nameinput);	
+					apilabel = document.createElement("label");
+					apilabel.style.color = "#ffffff";
+					apilabel.textContent = "FIO API Key";
+					apilabel.style.fontSize = "14px";
+					tile.appendChild(apilabel);
+					apiinput = document.createElement("input");
+					apiinput.style.backgroundColor = "#42361d";
+					apiinput.style.borderBottom = "1px solid #8d6411";
+					apiinput.style.padding = "2px";
+					apiinput.addEventListener("input", function(){
+						pmmgdata[1] = apiinput.value || "";
+						localStorage.setItem("pmmginfo", JSON.stringify(pmmgdata));
+					});
+					if(apikey != null && apikey != undefined){apiinput.value = apikey;}
+					tile.appendChild(apiinput);
+					weblabel = document.createElement("label");
+					weblabel.style.color = "#ffffff";
+					weblabel.textContent = "Web App ID";
+					weblabel.style.fontSize = "14px";
+					tile.appendChild(weblabel);
+					webinput = document.createElement("input");
+					webinput.style.backgroundColor = "#42361d";
+					webinput.style.borderBottom = "1px solid #8d6411";
+					webinput.style.padding = "2px";
+					webinput.addEventListener("input", function(){
+						pmmgdata[2] = webinput.value || "";
+						localStorage.setItem("pmmginfo", JSON.stringify(pmmgdata));
+					});
+					if(apikey != null && apikey != undefined){webinput.value = webappid;}
+					tile.appendChild(webinput);
+				}
+				else
+				{
+					namelabel = tile.children[0];
+					nameinput = tile.children[1];
+					apilabel = tile.children[2];
+					apiinput = tile.children[3];
+					weblabel = tile.children[4];
+					webinput = tile.children[5];
+				}
+			}
+		} catch(error){}
 	}
 	
 	cleanup(className)
