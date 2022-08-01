@@ -379,6 +379,7 @@ const Materials = {
 class PMMGMobile {
     get_prices(prices, webappid)
     {
+		console.log("Retrieving Prices");
         var xhr = new XMLHttpRequest();
         xhr.ontimeout = function(){console.log("Error! Timed Out!");};
 
@@ -412,7 +413,9 @@ class PMMGMobile {
 		
 		var pmmgdata = [null, null, null]
 		this.authenticate(pmmgdata);
-		if(Object.keys(prices).length == 0 && pmmgdata[2] != null)
+		console.log(prices);
+		console.log(pmmgdata[2]);
+		if(Object.keys(prices).length === 0 && pmmgdata[2] != null)
 		{
 			get_prices(prices, pmmgdata[2]);
 		}
